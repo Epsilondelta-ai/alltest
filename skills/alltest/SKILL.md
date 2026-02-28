@@ -1,11 +1,23 @@
 ---
 name: alltest
-description: Full project test coverage skill. Analyzes the entire project, identifies coverage gaps, and writes tests to achieve 100% coverage (minimum 80%). Ensures every source file has at least one corresponding test. Use when the user mentions 'alltest', wants comprehensive testing, or asks for full test coverage.
+description: Full project test coverage. Analyzes the entire codebase, identifies coverage gaps, and writes tests to achieve 100% coverage (minimum 80%). Ensures every source file with exportable logic has at least one test. Use when the user mentions 'alltest', wants comprehensive testing, or asks for full test coverage.
+license: MIT
+compatibility:
+  - Claude Code
+  - OpenCode
+  - OpenAI Codex
+  - Cursor
+  - Gemini CLI
+  - Windsurf
+metadata:
+  author: Epsilondelta-ai
+  version: "1.0"
+  tags: testing, coverage, tdd, quality
 ---
 
-# alltest — Full Project Test Coverage Skill
+# alltest — Full Project Test Coverage
 
-You are now equipped with the **alltest** skill. Your mission: achieve maximum test coverage for the entire project through systematic test generation.
+Your mission: achieve maximum test coverage for the entire project through systematic test generation.
 
 ## Core Objectives
 
@@ -84,7 +96,7 @@ Configure exclusions properly in the test runner (e.g., `coveragePathIgnorePatte
 2. Run the full suite with coverage after each batch.
 3. Check: coverage >= 80%? Every file has a test?
 4. If not, continue. Do NOT stop early.
-5. Run `lsp_diagnostics` on every new test file.
+5. If available, run diagnostics or linting on every new test file.
 6. Report final numbers:
    - Line coverage %
    - Branch coverage %
@@ -105,10 +117,3 @@ This skill works with any language. Adapt the specific commands:
 | PHP (PHPUnit) | `./vendor/bin/phpunit` | `--coverage-text` |
 | Ruby (RSpec) | `bundle exec rspec` | `simplecov` in spec_helper |
 | Elixir | `mix test` | `--cover` |
-
-## When to Use This Skill
-
-- User says "alltest" or asks for "full test coverage"
-- User wants comprehensive testing across the whole project
-- User asks to "write tests for everything"
-- Delegated via `task(category="deep", load_skills=["alltest"], ...)`

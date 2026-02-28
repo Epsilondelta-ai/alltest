@@ -4,38 +4,72 @@ set -euo pipefail
 REPO="Epsilondelta-ai/alltest"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
+SKILL_URL="$BASE_URL/skills/alltest/SKILL.md"
+COMMAND_URL="$BASE_URL/commands/alltest.md"
 
-# Detect OpenCode config directory
-if [ -n "${OPENCODE_CONFIG_DIR:-}" ]; then
-  CONFIG_DIR="$OPENCODE_CONFIG_DIR"
-elif [ -d "${XDG_CONFIG_HOME:-$HOME/.config}/opencode" ]; then
-  CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
+INSTALLED=0
+
+install_skill() {
+  local dir="$1"
+  local label="$2"
+  mkdir -p "$dir"
+  curl -fsSL "$SKILL_URL" -o "$dir/SKILL.md"
+  echo "  ✓ $label → $dir/"
+  INSTALLED=$((INSTALLED + 1))
+}
+
+echo "Installing alltest skill..."
+echo ""
+
+# --- Claude Code ---
+CLAUDE_DIR="$HOME/.claude/skills/alltest"
+if [ -d "$HOME/.claude" ]; then
+  install_skill "$CLAUDE_DIR" "Claude Code"
 else
-  CONFIG_DIR="$HOME/.config/opencode"
+  mkdir -p "$HOME/.claude/skills/alltest"
+  install_skill "$CLAUDE_DIR" "Claude Code (created ~/.claude/)"
 fi
 
-COMMANDS_DIR="$CONFIG_DIR/commands"
-SKILLS_DIR="$CONFIG_DIR/skills/alltest"
+# --- OpenAI Codex ---
+CODEX_DIR="$HOME/.codex/skills/alltest"
+if [ -d "$HOME/.codex" ]; then
+  install_skill "$CODEX_DIR" "OpenAI Codex"
+else
+  echo "  · OpenAI Codex — skipped (~/.codex/ not found)"
+fi
 
-echo "Installing alltest..."
-echo "  Config dir: $CONFIG_DIR"
+# --- OpenCode / oh-my-opencode ---
+if [ -n "${OPENCODE_CONFIG_DIR:-}" ]; then
+  OC_DIR="$OPENCODE_CONFIG_DIR"
+elif [ -d "${XDG_CONFIG_HOME:-$HOME/.config}/opencode" ]; then
+  OC_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
+else
+  OC_DIR=""
+fi
 
-# Create directories
-mkdir -p "$COMMANDS_DIR"
-mkdir -p "$SKILLS_DIR"
+if [ -n "$OC_DIR" ]; then
+  install_skill "$OC_DIR/skills/alltest" "OpenCode"
 
-# Download files
-echo "  Downloading command..."
-curl -fsSL "$BASE_URL/commands/alltest.md" -o "$COMMANDS_DIR/alltest.md"
-
-echo "  Downloading skill..."
-curl -fsSL "$BASE_URL/skills/alltest/SKILL.md" -o "$SKILLS_DIR/SKILL.md"
+  # OpenCode also supports slash commands
+  mkdir -p "$OC_DIR/commands"
+  curl -fsSL "$COMMAND_URL" -o "$OC_DIR/commands/alltest.md"
+  echo "  ✓ OpenCode /alltest command → $OC_DIR/commands/"
+else
+  echo "  · OpenCode — skipped (~/.config/opencode/ not found)"
+fi
 
 echo ""
-echo "Done! alltest installed."
+if [ "$INSTALLED" -gt 0 ]; then
+  echo "Done! alltest installed to $INSTALLED tool(s)."
+else
+  echo "No supported tools detected. Install manually:"
+  echo "  Claude Code:  ~/.claude/skills/alltest/SKILL.md"
+  echo "  OpenAI Codex: ~/.codex/skills/alltest/SKILL.md"
+  echo "  OpenCode:     ~/.config/opencode/skills/alltest/SKILL.md"
+fi
 echo ""
 echo "Usage:"
-echo "  /alltest                    — Run as slash command"
-echo "  load_skills=[\"alltest\"]     — Load as skill in task delegation"
+echo "  Any tool    → The agent auto-activates when you ask for test coverage"
+echo "  OpenCode    → /alltest (slash command)"
 echo ""
-echo "Restart OpenCode to pick up the new command and skill."
+echo "Restart your coding tool to pick up the new skill."
