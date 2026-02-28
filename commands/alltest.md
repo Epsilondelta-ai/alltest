@@ -1,3 +1,7 @@
+---
+description: Achieve full test coverage (100% goal, 80% minimum). Analyzes the project, identifies gaps, writes tests for every file.
+---
+
 # /alltest — Full Project Test Coverage
 
 You are now in **alltest mode**. Your single objective: achieve maximum test coverage for the entire project.
