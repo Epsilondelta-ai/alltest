@@ -1,6 +1,6 @@
 # alltest
 
-[OpenCode](https://opencode.ai) + [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) custom command & skill for achieving full test coverage across any project.
+[OpenCode](https://opencode.ai) custom command & skill for achieving full test coverage across any project. Best with [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode).
 
 ## What it does
 
@@ -18,6 +18,16 @@ Type `/alltest` in OpenCode and the agent will:
 
 Works with any language: TypeScript, Python, Go, Rust, Java, PHP, Ruby, Elixir, and more.
 
+## Requirements
+
+- [OpenCode](https://opencode.ai) — `/alltest` slash command works out of the box.
+- [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) (recommended) — unlocks full feature set:
+  - `load_skills=["alltest"]` for task delegation
+  - `lsp_diagnostics` verification on new test files
+  - Background agent parallel exploration
+
+> **Note**: Typing `alltest` without the `/` slash does NOT trigger the command. You must use `/alltest`. Keyword-based triggering (like `ultrawork`) is an oh-my-opencode built-in feature that does not support custom keywords.
+
 ## Install
 
 ```bash
@@ -34,7 +44,7 @@ Restart OpenCode after installation.
 /alltest
 ```
 
-### As a skill (for task delegation)
+### As a skill (oh-my-opencode only)
 
 ```
 task(category="deep", load_skills=["alltest"], prompt="Achieve full test coverage for this project")
